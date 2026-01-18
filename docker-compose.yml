@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    container_name: desafio-pb-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-moviedb}
+      POSTGRES_USER: ${POSTGRES_USER:-movieuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-moviepass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: desafio-pb-backend
+    env_file:
+      - .env
+    environment:
+      # App factory
+      FLASK_APP: "app:create_app"
+      FLASK_RUN_HOST: "0.0.0.0"
+      FLASK_RUN_PORT: "8000"
+    depends_on:
+      - db
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+    command: >
+      bash -lc "flask db upgrade &&
+                flask run"
+
+volumes:
+  pgdata:
