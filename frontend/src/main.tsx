@@ -1,15 +1,12 @@
-import { useState } from "react"
-import { Header } from "./components/header"
+import React from "react"
+import ReactDOM from "react-dom/client"
+import { App } from "./App"
+import "./index.css"
 
-export function App() {
-  const [page, setPage] = useState<"home" | "rated">("home")
+document.documentElement.classList.add("dark")
 
-  return (
-    <>
-      <Header active={page} onChange={setPage} />
-
-      {page === "home" && <div>Home</div>}
-      {page === "rated" && <div>Filmes Avaliados</div>}
-    </>
-  )
-}
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
