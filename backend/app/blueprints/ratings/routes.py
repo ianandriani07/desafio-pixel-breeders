@@ -36,9 +36,7 @@ def get_all_ratings():
     ).all()
 
     if not ratings:
-        return jsonify({
-            "error": "Ratings not found for this user"
-        }), 404
+        return jsonify([]), 200
 
     return jsonify([r.to_dict() for r in ratings]), 200
 

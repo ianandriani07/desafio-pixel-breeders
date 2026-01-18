@@ -18,10 +18,10 @@ services:
     env_file:
       - .env
     environment:
-      # App factory
       FLASK_APP: "app:create_app"
       FLASK_RUN_HOST: "0.0.0.0"
       FLASK_RUN_PORT: "8000"
+      SQLALCHEMY_DATABASE_URI: "postgresql+psycopg://${POSTGRES_USER:-movieuser}:${POSTGRES_PASSWORD:-moviepass}@db:5432/${POSTGRES_DB:-moviedb}"
     depends_on:
       - db
     ports:
@@ -30,7 +30,23 @@ services:
       - ./backend:/app
     command: >
       bash -lc "flask db upgrade &&
+                flask commands seed &&
                 flask run"
+                
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: desafio-pb-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:8080"
+    # se teu front usa env em build/runtime, dá pra passar aqui
+    # environment:
+    #   VITE_API_URL: "http://localhost:8000"
+    command: >
+      sh -lc "pnpm build && pnpm preview --host 0.0.0.0 --port 8080"
 
 volumes:
   pgdata:

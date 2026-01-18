@@ -13,6 +13,9 @@ def create_app():
 
     from app import models 
 
+    from app.commands import bp as commands_bp
+    app.register_blueprint(commands_bp)
+
     CORS(app, resources={r"/api/*": {"origins": app.config.get("FRONTEND_ORIGIN")}})
 
     app.register_blueprint(ratings_bp, url_prefix="/api/ratings")

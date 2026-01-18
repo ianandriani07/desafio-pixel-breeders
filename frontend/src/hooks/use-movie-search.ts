@@ -11,8 +11,12 @@ export function useMovieSearch() {
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+
+
   const search = useCallback(
-    async (nextQuery?: string) => {
+    async (nextQuery?: string, nextPage = 1) => {
       const queryToSearch = (nextQuery ?? query).trim()
       setHasSearched(true)
 
@@ -22,6 +26,8 @@ export function useMovieSearch() {
         setResults([])
         setError(null)
         setIsLoading(false)
+        setPage(1)
+        setTotalPages(1)
         return
       }
 
@@ -32,20 +38,21 @@ export function useMovieSearch() {
         setIsLoading(true)
         setError(null)
 
-        const data = await searchMovies(queryToSearch, controller.signal)
+        const data = await searchMovies(queryToSearch, nextPage, controller.signal)
+
         if (!controller.signal.aborted) {
-          setResults(data)
+          setResults(data.results)
+          setPage(data.page)
+          setTotalPages(data.total_pages)
         }
       } catch (err) {
         if ((err as Error).name === "AbortError") return
         setError("Erro ao buscar filmes.")
       } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false)
-        }
+        if (!controller.signal.aborted) setIsLoading(false)
       }
     },
-    [query]
+    [query],
   )
 
   return {
@@ -56,5 +63,7 @@ export function useMovieSearch() {
     isLoading,
     error,
     search,
+    page,
+    totalPages,
   }
 }

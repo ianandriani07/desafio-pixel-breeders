@@ -1,6 +1,13 @@
 const TMDB_BASE_URL = "https://api.themoviedb.org/3"
 const TMDB_TOKEN = import.meta.env.VITE_TMDB_API_KEY
 
+export type PaginatedResponse<T> = {
+  page: number
+  results: T[]
+  total_pages: number
+  total_results: number
+}
+
 export type MovieSummary = {
   id: number
   title: string
@@ -31,20 +38,18 @@ async function tmdbFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
   return res.json() as Promise<T>
 }
 
-export async function getTrendingMovies(signal?: AbortSignal) {
-  const data = await tmdbFetch<{ results: MovieSummary[] }>(
-    `/trending/movie/day?language=pt-BR`,
-    signal
+export async function getTrendingMovies(page = 1, signal?: AbortSignal) {
+  return tmdbFetch<PaginatedResponse<MovieSummary>>(
+    `/trending/movie/day?language=pt-BR&page=${page}`,
+    signal,
   )
-  return data.results
 }
 
-export async function searchMovies(query: string, signal?: AbortSignal) {
-  const data = await tmdbFetch<{ results: MovieSummary[] }>(
-    `/search/movie?query=${encodeURIComponent(query)}&language=pt-BR`,
-    signal
+export async function searchMovies(query: string, page = 1, signal?: AbortSignal) {
+  return tmdbFetch<PaginatedResponse<MovieSummary>>(
+    `/search/movie?query=${encodeURIComponent(query)}&language=pt-BR&page=${page}`,
+    signal,
   )
-  return data.results
 }
 
 export async function getMovieDetails(movieId: number, signal?: AbortSignal) {
@@ -54,7 +59,7 @@ export async function getMovieDetails(movieId: number, signal?: AbortSignal) {
 export async function getMovieCredits(movieId: number, signal?: AbortSignal) {
   const data = await tmdbFetch<{ cast: CastMember[] }>(
     `/movie/${movieId}/credits?language=pt-BR`,
-    signal
+    signal,
   )
   return data.cast ?? []
 }
