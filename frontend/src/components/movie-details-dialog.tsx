@@ -9,23 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { RatingStars } from "@/components/rating-stars"
-
-export type Movie = {
-  id: number
-  title: string
-  poster_path: string | null
-  overview?: string
-  release_date?: string
-}
-
-export interface CastMember {
-  id: number
-  name: string
-  character: string
-}
+import type { CastMember, MovieDetails } from "@/services/tmdb"
 
 interface MovieDetailsDialogProps {
-  movie: Movie | null
+  movie: MovieDetails | null
   isOpen: boolean
   onClose: () => void
 
@@ -69,8 +56,11 @@ export function MovieDetailsDialog({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card border-border p-0">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open: boolean) => !open && onClose()}
+    >
+      <DialogContent className="w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto border-border bg-card p-0 sm:max-w-4xl lg:max-w-5xl">
         <DialogHeader className="sr-only">
           <DialogTitle>{movie.title}</DialogTitle>
         </DialogHeader>
