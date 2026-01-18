@@ -1,3 +1,5 @@
+import type { UserRating } from "@/hooks/use-user-ratings"
+
 export type RatingDTO = {
   movie_id: number
   rating: number
@@ -44,4 +46,12 @@ export async function upsertRating(movieId: number, rating: number) {
 
 export async function deleteRating(movieId: number) {
   await apiFetch<void>(`/api/ratings/${movieId}`, { method: "DELETE" })
+}
+
+export async function getUserRatings(signal?: AbortSignal): Promise<UserRating[]> {
+  const res = await fetch("/api/ratings", { signal })
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`)
+  }
+  return res.json()
 }
