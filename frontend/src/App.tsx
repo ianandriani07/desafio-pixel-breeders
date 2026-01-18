@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Header } from "./components/header"
-
+import { HomePage } from "./pages/home"
+import { RatedPage } from "./pages/rated"
 export function App() {
   const [page, setPage] = useState<"home" | "rated">("home")
 
@@ -8,8 +9,8 @@ export function App() {
     <>
       <Header active={page} onChange={setPage} />
 
-      {page === "home" && <div className="p-4">Home</div>}
-      {page === "rated" && <div className="p-4">Filmes Avaliados</div>}
+      {page === "home" && <HomePage />}
+      {page === "rated" && <RatedPage />}
     </>
   )
 }

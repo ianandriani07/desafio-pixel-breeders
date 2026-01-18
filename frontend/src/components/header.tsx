@@ -9,21 +9,21 @@ type HeaderProps = {
 export function Header({ active = "home", onChange }: HeaderProps) {
   return (
     <header className="border-b border-border">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Brand */}
-        <div className="group flex items-center gap-2 cursor-pointer">
-          <Film className="h-6 w-6 text-accent" />
-          <span className="text-xl font-bold text-foreground group-hover:text-accent transition-colors">
-            Cinéf1ilo
+      <div className="container mx-auto flex h-24 items-center justify-between px-6">
+        {/* Logo */}
+        <div className="group flex items-center gap-3 cursor-pointer">
+          <Film className="h-10 w-10 text-accent" />
+          <span className="text-3xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
+            Cinéfilo
           </span>
         </div>
 
         {/* Nav */}
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-3">
           <button
             onClick={() => onChange?.("home")}
             className={cn(
-              "px-3 py-2 text-sm font-medium transition-colors hover:text-accent",
+              "px-4 py-3 text-base font-medium transition-colors hover:text-accent",
               active === "home"
                 ? "text-foreground"
                 : "text-muted-foreground"
@@ -35,13 +35,13 @@ export function Header({ active = "home", onChange }: HeaderProps) {
           <button
             onClick={() => onChange?.("rated")}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors hover:text-accent",
+              "flex items-center gap-2 px-4 py-3 text-base font-medium transition-colors hover:text-accent",
               active === "rated"
                 ? "text-foreground"
                 : "text-muted-foreground"
             )}
           >
-            <Star className="h-4 w-4" />
+            <Star className="h-5 w-5" />
             Filmes Avaliados
           </button>
         </nav>
