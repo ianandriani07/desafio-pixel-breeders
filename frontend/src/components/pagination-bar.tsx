@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/pagination"
 
 function getVisiblePages(current: number, total: number) {
-  // Layout: 1 ... (current-1 current current+1) ... total
-  // com ajustes perto das bordas
+  
   const pages: (number | "ellipsis")[] = []
 
   const clamp = (n: number) => Math.max(1, Math.min(total, n))
@@ -21,7 +20,6 @@ function getVisiblePages(current: number, total: number) {
   pages.push(1)
 
   if (total <= 7) {
-    // tudo direto
     return Array.from({ length: total }, (_, i) => i + 1)
   }
 
@@ -64,7 +62,7 @@ type PaginationBarProps = {
   onPageChange: (page: number) => void
   disabled?: boolean
   className?: string
-  maxTotalPages?: number // opcional: se quiser "capar"
+  maxTotalPages?: number 
 }
 
 export function PaginationBar({

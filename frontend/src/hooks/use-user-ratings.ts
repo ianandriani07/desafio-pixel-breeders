@@ -48,6 +48,6 @@ export function useUserRatings() {
     isLoading,
     error,
     refetch: fetchRatings,
-    setRatings, // opcional: útil pra atualizar lista ao deletar no modal
+    setRatings, 
   }
 }

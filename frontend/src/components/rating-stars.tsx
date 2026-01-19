@@ -25,7 +25,6 @@ export function RatingStars({
   const handleClick = (starIndex: number) => {
     if (readonly || !onRate) return
 
-    // If clicking on the same star that's already selected, remove the rating
     if (rating === starIndex) {
       onRate(null)
     } else {

@@ -110,7 +110,6 @@ export function RatedPage() {
       const exists = prev.some((r) => r.tmdb_movie_id === selectedMovie.id)
 
       if (!exists) {
-        // adiciona (pode ser no topo)
         return [{ tmdb_movie_id: selectedMovie.id, rating }, ...prev]
       }
 
@@ -123,7 +122,6 @@ export function RatedPage() {
       const exists = prev.some((m) => m.id === selectedMovie.id)
 
       if (!exists) {
-        // como você já tem os detalhes no modal (selectedMovie), dá pra inserir sem refetch
         const newMovie: RatedMovie = { ...selectedMovie, userRating: rating }
         return [newMovie, ...prev]
       }
