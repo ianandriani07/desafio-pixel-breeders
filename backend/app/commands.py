@@ -1,11 +1,11 @@
 import click
-from flask import Blueprint
+from flask.cli import AppGroup
 from app.extensions import db
 from app.models import User
 
-bp = Blueprint("commands", __name__)
+commands = AppGroup("commands")
 
-@bp.cli.command("seed")
+@commands.command("seed")
 def seed():
     user = db.session.get(User, 1)
     if user is None:

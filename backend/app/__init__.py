@@ -13,8 +13,8 @@ def create_app():
 
     from app import models 
 
-    from app.commands import bp as commands_bp
-    app.register_blueprint(commands_bp)
+    from app.commands import commands
+    app.cli.add_command(commands)
 
     CORS(app, resources={r"/api/*": {"origins": app.config.get("FRONTEND_ORIGIN")}})
 
