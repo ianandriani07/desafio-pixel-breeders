@@ -14,6 +14,7 @@ export function useMovieSearch() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
 
+  const [year, setYear] = useState<string | null>(null)
 
   const search = useCallback(
     async (nextQuery?: string, nextPage = 1) => {
@@ -38,7 +39,7 @@ export function useMovieSearch() {
         setIsLoading(true)
         setError(null)
 
-        const data = await searchMovies(queryToSearch, nextPage, controller.signal)
+        const data = await searchMovies(queryToSearch, nextPage, year, controller.signal)
 
         if (!controller.signal.aborted) {
           setResults(data.results)
@@ -52,7 +53,7 @@ export function useMovieSearch() {
         if (!controller.signal.aborted) setIsLoading(false)
       }
     },
-    [query],
+    [query, year],
   )
 
   return {
@@ -65,5 +66,7 @@ export function useMovieSearch() {
     search,
     page,
     totalPages,
+    year,
+    setYear,
   }
 }

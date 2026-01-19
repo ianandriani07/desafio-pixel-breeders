@@ -45,9 +45,22 @@ export async function getTrendingMovies(page = 1, signal?: AbortSignal) {
   )
 }
 
-export async function searchMovies(query: string, page = 1, signal?: AbortSignal) {
+export async function searchMovies(
+  query: string,
+  page = 1,
+  year?: string | null,
+  signal?: AbortSignal,
+) {
+  const params = new URLSearchParams({
+    query,
+    language: "pt-BR",
+    page: String(page),
+  })
+
+  if (year) params.set("primary_release_year", year)
+
   return tmdbFetch<PaginatedResponse<MovieSummary>>(
-    `/search/movie?query=${encodeURIComponent(query)}&language=pt-BR&page=${page}`,
+    `/search/movie?${params.toString()}`,
     signal,
   )
 }
@@ -62,4 +75,22 @@ export async function getMovieCredits(movieId: number, signal?: AbortSignal) {
     signal,
   )
   return data.cast ?? []
+}
+
+export async function discoverMoviesByYear(
+  year: string,
+  page = 1,
+  signal?: AbortSignal,
+) {
+  const params = new URLSearchParams({
+    language: "pt-BR",
+    page: String(page),
+    sort_by: "popularity.desc",
+    primary_release_year: year,
+  })
+
+  return tmdbFetch<PaginatedResponse<MovieSummary>>(
+    `/discover/movie?${params.toString()}`,
+    signal,
+  )
 }

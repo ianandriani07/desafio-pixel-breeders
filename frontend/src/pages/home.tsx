@@ -6,6 +6,7 @@ import { MovieCard } from "@/components/movie-card"
 import { MovieCardSkeleton } from "@/components/movie-card-skeleton"
 import { MovieDetailsDialog } from "@/components/movie-details-dialog"
 import { PaginationBar } from "@/components/pagination-bar"
+import { YearFilter } from "@/components/year-filter"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -29,6 +30,8 @@ export function HomePage() {
         search,
         page: searchPage,
         totalPages: searchTotalPages,
+        year,
+        setYear,
     } = useMovieSearch()
 
     const {
@@ -38,7 +41,7 @@ export function HomePage() {
         page: trendingPage,
         totalPages: trendingTotalPages,
         fetchTrending,
-    } = useTrendingMovies()
+    } = useTrendingMovies(year)
 
     const {
         isDialogOpen,
@@ -66,7 +69,11 @@ export function HomePage() {
     }
 
     const moviesToShow = hasSearched ? results : trending
-    const sectionTitle = hasSearched ? `Resultados para "${query}"` : "Em alta hoje"
+    const sectionTitle = hasSearched
+        ? `Resultados para "${query}"`
+        : year
+            ? `Em alta em ${year}`
+            : "Em alta hoje"
 
     const isLoading = hasSearched ? isSearchLoading : isTrendingLoading
     const error = hasSearched ? searchError : trendingError
@@ -116,51 +123,59 @@ export function HomePage() {
             >
                 Buscar
             </Button>
+            <YearFilter
+                value={year}
+                onChange={(y) => {
+                    setYear(y)
+                    if (hasSearched) void search(undefined, 1)
+                }}
+            />
+
             </section>
 
-            <h2
-                ref={topRef}
-                className="mb-4 text-left text-xl font-semibold text-foreground"
-            >
-                {sectionTitle}
-            </h2>
+                <h2
+                    ref={topRef}
+                    className="mb-4 text-left text-xl font-semibold text-foreground"
+                >
+                    {sectionTitle}
+                </h2>
 
 
-            {isLoading && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                {Array.from({ length: 10 }).map((_, i) => (
-                <MovieCardSkeleton key={i} />
-                ))}
-            </div>
-            )}
-
-            {error && <p className="text-destructive">{error}</p>}
-
-            {!isLoading && !error && (
-            <>
+                {isLoading && (
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-                {moviesToShow.map((movie) => (
-                    <MovieCard
-                    key={movie.id}
-                    id={movie.id}
-                    title={movie.title}
-                    posterPath={movie.poster_path}
-                    onClick={() => openMovie(movie.id)}
-                    />
-                ))}
+                    {Array.from({ length: 10 }).map((_, i) => (
+                    <MovieCardSkeleton key={i} />
+                    ))}
                 </div>
+                )}
 
-                <div className="mt-8 flex justify-center">
-                <PaginationBar
-                    page={currentPage}
-                    totalPages={currentTotalPages}
-                    onPageChange={handlePageChange}
-                    disabled={isLoading}
-                    maxTotalPages={500}
-                />
-                </div>
-            </>
-            )}
+                {error && <p className="text-destructive">{error}</p>}
+
+                {!isLoading && !error && (
+                <>
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                    {moviesToShow.map((movie) => (
+                        <MovieCard
+                        key={movie.id}
+                        id={movie.id}
+                        title={movie.title}
+                        posterPath={movie.poster_path}
+                        onClick={() => openMovie(movie.id)}
+                        />
+                    ))}
+                    </div>
+
+                    <div className="mt-8 flex justify-center">
+                    <PaginationBar
+                        page={currentPage}
+                        totalPages={currentTotalPages}
+                        onPageChange={handlePageChange}
+                        disabled={isLoading}
+                        maxTotalPages={500}
+                    />
+                    </div>
+                </>
+                )}
         </section>
 
         <MovieDetailsDialog
