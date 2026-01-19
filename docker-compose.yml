@@ -10,6 +10,11 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
 
   backend:
     build:
@@ -23,7 +28,8 @@ services:
       FLASK_RUN_PORT: "8000"
       SQLALCHEMY_DATABASE_URI: "postgresql+psycopg://${POSTGRES_USER:-movieuser}:${POSTGRES_PASSWORD:-moviepass}@db:5432/${POSTGRES_DB:-moviedb}"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "8000:8000"
     volumes:
