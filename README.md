@@ -191,7 +191,7 @@ Copie o valor gerado e utilize no `.env`.
 
 ## 🐳 Rodando o Projeto Localmente
 
-Com Docker e Docker Compose instalados, execute:
+Após configurar os arquivos `.env` (backend e frontend), com Docker e Docker Compose instalados, execute:
 
 ```bash
 docker-compose up --build

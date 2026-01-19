@@ -44,8 +44,6 @@ export function MovieDetailsDialog({
   isSavingRating = false,
   ratingError = null,
 }: MovieDetailsDialogProps) {
-  if (!movie) return null
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Data desconhecida"
     return new Date(dateString).toLocaleDateString("pt-BR", {
@@ -55,6 +53,10 @@ export function MovieDetailsDialog({
     })
   }
 
+  const shouldShowLoading = isLoadingDetails || !movie
+  const shouldShowError = isError && !shouldShowLoading
+  const shouldShowContent = !!movie && !shouldShowLoading && !shouldShowError
+
   return (
     <Dialog
       open={isOpen}
@@ -62,7 +64,7 @@ export function MovieDetailsDialog({
     >
       <DialogContent className="w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto border-border bg-card p-0 sm:max-w-4xl lg:max-w-5xl">
         <DialogHeader className="sr-only">
-          <DialogTitle>{movie.title}</DialogTitle>
+          <DialogTitle>{movie?.title ?? "Detalhes do filme"}</DialogTitle>
         </DialogHeader>
 
         <button
@@ -73,11 +75,11 @@ export function MovieDetailsDialog({
           <X className="h-4 w-4" />
         </button>
 
-        {isLoadingDetails ? (
+        {shouldShowLoading ? (
           <MovieDetailsSkeleton />
-        ) : isError ? (
+        ) : shouldShowError ? (
           <MovieDetailsError onRetry={onRetry ?? (() => {})} />
-        ) : (
+        ) : shouldShowContent ? (
           <div className="flex flex-col gap-6 p-6 md:flex-row">
             {/* Poster */}
             <div className="mx-auto flex-shrink-0 md:mx-0">
@@ -178,6 +180,8 @@ export function MovieDetailsDialog({
               </div>
             </div>
           </div>
+        ) : (
+          <MovieDetailsError onRetry={onRetry ?? (() => {})} />
         )}
       </DialogContent>
     </Dialog>
