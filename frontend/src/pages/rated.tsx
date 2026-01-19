@@ -19,6 +19,7 @@ export function RatedPage() {
 
   const [movies, setMovies] = useState<RatedMovie[]>([])
   const [isResolvingMovies, setIsResolvingMovies] = useState(false)
+  const [resolveError, setResolveError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!ratings.length) {
@@ -31,19 +32,35 @@ export function RatedPage() {
     const resolveMovies = async () => {
       try {
         setIsResolvingMovies(true)
+        setResolveError(null)
 
-        const data = await Promise.all(
+        const results = await Promise.allSettled(
           ratings.map(async (r) => {
             const movie = await getMovieDetails(r.tmdb_movie_id)
             return {
               ...movie,
               userRating: r.rating,
             }
-          })
+          }),
         )
 
-        if (!cancelled) {
-          setMovies(data)
+        if (cancelled) return
+
+        const fulfilled = results.filter(
+          (result): result is PromiseFulfilledResult<RatedMovie> =>
+            result.status === "fulfilled",
+        )
+
+        const rejected = results.filter(
+          (result) => result.status === "rejected",
+        )
+
+        setMovies(fulfilled.map((result) => result.value))
+
+        if (rejected.length > 0) {
+          setResolveError(
+            "Não foi possível carregar alguns filmes avaliados.",
+          )
         }
       } finally {
         if (!cancelled) {
@@ -119,6 +136,7 @@ export function RatedPage() {
 
 
   const showLoading = isLoading || isResolvingMovies
+  const showError = error ?? resolveError
 
   return (
     <>
@@ -135,17 +153,17 @@ export function RatedPage() {
           </div>
         )}
 
-        {!showLoading && error && (
-          <p className="text-destructive">{error}</p>
+        {!showLoading && showError && (
+          <p className="text-destructive">{showError}</p>
         )}
 
-        {!showLoading && !error && movies.length === 0 && (
+        {!showLoading && !showError && movies.length === 0 && (
           <p className="text-muted-foreground">
             Você ainda não avaliou nenhum filme 🎬⭐
           </p>
         )}
 
-        {!showLoading && !error && movies.length > 0 && (
+        {!showLoading && movies.length > 0 && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {movies.map((movie) => (
               <MovieCard

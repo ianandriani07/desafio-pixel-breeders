@@ -53,9 +53,14 @@ export function useMovieDetailsDialog() {
       setSelectedMovie(movieDetails)
       setCast(credits)
 
-      const rating = await getRating(movieId)
-      if (requestId !== requestIdRef.current) return
-      setUserRating(rating?.rating ?? null)
+      try {
+        const rating = await getRating(movieId)
+        if (requestId !== requestIdRef.current) return
+        setUserRating(rating?.rating ?? null)
+      } catch (err) {
+        if (requestId !== requestIdRef.current) return
+        setRatingError("Não foi possível carregar sua avaliação.")
+      }
     } catch (err) {
       if ((err as Error).name === "AbortError") return
       setIsDetailsError(true)

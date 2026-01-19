@@ -213,7 +213,7 @@ O projeto utiliza um **seed inicial** para criar um usuário padrão no banco de
 ### Comando de seed
 
 ```bash
-docker-compose exec backend flask seed
+docker-compose exec backend flask commands seed
 ```
 
 ### Implementação do seed
